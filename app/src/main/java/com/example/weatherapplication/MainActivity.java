@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        getData();
+
         fused = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fused.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
                             );
 
                             String lat = String.valueOf(addresses.get(0).getLatitude());
-
+                            String lon = String.valueOf(addresses.get(0).getLongitude());
+                            getData(lat,lon);
                             cityName = addresses.get(0).getLocality();
                             String stateName = addresses.get(0).getAdminArea();
                             textView.setText(cityName + " : " + stateName);
@@ -134,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getData() {
-        String url = "https://api.openweathermap.org/data/2.5/onecall?lat=19.1102749&lon=72.8533541&appid=7f861af6a0499b3ff32e8b218de8eead";
+    private void getData(String lat,String lon) {
+        String url = "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=7f861af6a0499b3ff32e8b218de8eead";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
             }
         });
         RequestQueue requestQueue1 = Volley.newRequestQueue(this);
@@ -252,4 +253,9 @@ public class MainActivity extends AppCompatActivity {
         return date;
     }
 
+    public void refresh(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
